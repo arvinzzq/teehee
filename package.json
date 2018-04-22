@@ -1,0 +1,24 @@
+{
+  "name": "@zz/bloom",
+  "version": "0.0.1",
+  "description": "A simple scaffolding tool.",
+  "main": "index.js",
+  "bin": {
+    "bloom": "bin/bloom.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "scaffolding",
+    "tool"
+  ],
+  "author": "zhongzhiqiang <zqzhong1211@163.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.4.0",
+    "commander": "^2.15.1",
+    "download": "^6.2.5",
+    "ora": "^2.0.0"
+  }
+}

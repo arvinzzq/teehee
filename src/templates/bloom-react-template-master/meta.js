@@ -1,31 +1,35 @@
 module.exports = {
   prompts: [
     {
-      type: "string",
+      type: 'input',
       name: "name",
-      required: true,
-      message: "Project name"
+      message: "Project name",
+      validate(input) {
+        if (!input) {
+            return '项目名不能为空';
+        }
+        return true;
+      }
     },
     {
-      type: "string",
+      type: 'input',
       name: "description",
-      required: true,
       message: "Project description",
       default: "A React.js project"
     },
     {
-      type: "string",
+      type: 'input',
       name: "keywords",
       message: "Project keywords",
       default: "react"
     },
     {
-      type: "string",
+      type: 'input',
       name: "author",
       message: "Author"
     },
     {
-      type: "string",
+      type: 'input',
       name: "license",
       message: "License",
       default: "MIT"

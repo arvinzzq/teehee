@@ -4,6 +4,7 @@ const download = require('download');
 const chalk = require('chalk');
 const ora = require('ora');
 const inquirer = require('inquirer');
+const lodash = require('lodash');
 const gitUser = require('./gitUser');
 const template = require('../../config/template');
 
@@ -33,33 +34,63 @@ module.exports = (projectType, command) => {
     const metaPath = path.resolve(__dirname, `../templates/bloom-${projectType}-template-master/meta.js`);
     const meta = require(metaPath);
 
-    // Collect prompts according to command input.
-    const prompts = [];
-    meta.prompts.forEach(item => {
-      if (!command[item.name]) {
-        prompts.push(item.name === 'author' ? {
-          ...item,
-          default: gitUser().author
-        } : item);
-      }
-    });
+    // Collect initialized options of parameters.
+
+    const {
+      name,
+      version,
+      description,
+      keywords,
+      author,
+      license
+    } = command;
 
     const options = {
-      name: command.name || '',
-      version: command.version || '0.0.1',
-      description: command.description || '',
-      keywords: command.keywords || '',
-      author: command.author || '',
-      license: command.license ||  'MIT'
+      name: (!lodash.isFunction(name) && name) || '',
+      version: (!lodash.isFunction(version) && version) || '0.0.1',
+      description: (!lodash.isFunction(description) && description) || '',
+      keywords: keywords || '',
+      author: author || gitUser().author,
+      license: license ||  'MIT'
     };
 
-    // issue of version and description is to be fixed.
+    // Collect prompts according to command input.
+    const prompts = [];
+
+    // Set default name prompt
+    if (!options['name']) {
+      prompts.unshift({
+        type: 'input',
+        name: 'name',
+        message: 'Project name:',
+        default: `${projectType}`,
+        validate(input) {
+            if (!input) {
+                return 'Project name is required';
+            }
+            return true;
+        }
+      });
+    }
+
+    // Merge prompts
+    meta.prompts.forEach(item => {
+      if (!command[item.name] || lodash.isFunction(command[item.name])) {
+        if (item.name === 'name') {
+          // Replace default prompt of name.
+          prompts[0] = item;
+        } else {
+          prompts.push(item);
+        }
+      }
+    });
 
     inquirer.prompt(prompts).then(anwsers => {
       const context = {
         ...options,
         ...anwsers
       };
+      console.log('context: ', context);
     })
 
   }).catch(err => {

@@ -10,7 +10,7 @@ const gitUser = require('./gitUser');
 const template = require('../../config/template');
 
 /**
- * Download template files to temporary folder,
+ * Download template files to temporary folder which will be removed,
  * and render files to destination folder according to context.
  */
 
@@ -22,7 +22,7 @@ module.exports = (projectType, projectName, command) => {
     return;
   }
 
-  fs.mkdirpSync(path.resolve(__dirname, '../templates'));
+  fs.ensureDirSync(path.resolve(__dirname, '../templates'));
   const spinner = ora('Downloading template').start();
 
   const downloadPath = `https://github.com/zz1211/bloom-${projectType}-template/archive/master.zip`;

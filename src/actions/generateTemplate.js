@@ -1,10 +1,11 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const download = require('download');
 const chalk = require('chalk');
 const ora = require('ora');
 const inquirer = require('inquirer');
 const lodash = require('lodash');
+const handlebars = require('handlebars');
 const gitUser = require('./gitUser');
 const template = require('../../config/template');
 
@@ -13,7 +14,7 @@ const template = require('../../config/template');
  * and render files to destination folder according to context.
  */
 
-module.exports = (projectType, command) => {
+module.exports = (projectType, projectName, command) => {
   const { gitAddr, prefix, listTemplates } = template;
   // Check whether type of template is exist.
   if (!listTemplates.includes(projectType)) {
@@ -21,6 +22,7 @@ module.exports = (projectType, command) => {
     return;
   }
 
+  fs.mkdirpSync(path.resolve(__dirname, '../templates'));
   const spinner = ora('Downloading template').start();
 
   const downloadPath = `https://github.com/zz1211/bloom-${projectType}-template/archive/master.zip`;
@@ -37,7 +39,6 @@ module.exports = (projectType, command) => {
     // Collect initialized options of parameters.
 
     const {
-      name,
       version,
       description,
       keywords,
@@ -46,7 +47,6 @@ module.exports = (projectType, command) => {
     } = command;
 
     const options = {
-      name: (!lodash.isFunction(name) && name) || '',
       version: (!lodash.isFunction(version) && version) || '0.0.1',
       description: (!lodash.isFunction(description) && description) || '',
       keywords: keywords || '',
@@ -56,32 +56,9 @@ module.exports = (projectType, command) => {
 
     // Collect prompts according to command input.
     const prompts = [];
-
-    // Set default name prompt
-    if (!options['name']) {
-      prompts.unshift({
-        type: 'input',
-        name: 'name',
-        message: 'Project name:',
-        default: `${projectType}`,
-        validate(input) {
-            if (!input) {
-                return 'Project name is required';
-            }
-            return true;
-        }
-      });
-    }
-
-    // Merge prompts
     meta.prompts.forEach(item => {
       if (!command[item.name] || lodash.isFunction(command[item.name])) {
-        if (item.name === 'name') {
-          // Replace default prompt of name.
-          prompts[0] = item;
-        } else {
-          prompts.push(item);
-        }
+        prompts.push(item);
       }
     });
 
@@ -90,11 +67,28 @@ module.exports = (projectType, command) => {
         ...options,
         ...anwsers
       };
-      console.log('context: ', context);
-    })
+      if (context.hasOwnProperty('keywords')) {
+        context.keywords = context.keywords.split(' ');
+      }
+      data.forEach((item) => {
+        item.newPath = path.join(process.cwd(), item.path.replace(item.path.split('/')[0], projectName));
+        if (item.type === 'file') {
+          if (/package.json/.test(item.path)) {
+            item.newData = handlebars.compile(item.data.toString('utf8'))(context)
+          } else {
+            item.newData = item.data;
+          }
+          fs.outputFileSync(item.newPath, item.newData);
+        } else if (item.type === 'directory') {
+          fs.ensureDirSync(item.newPath);
+        }
+      });
+      fs.removeSync(path.resolve(__dirname, '../templates'));
+    });
 
   }).catch(err => {
     spinner.stop();
+    fs.removeSync(path.resolve(__dirname, '../templates'));
     console.log(chalk.red(`Error: ${err} \nTemplate download failed.`));
   });
 };

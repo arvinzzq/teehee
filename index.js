@@ -9,8 +9,7 @@ program
   .version(require('./package').version);
 
 program
-  .command('init <projectType>')
-  .option('--name <name>', '项目名')
+  .command('init <projectType> <projectName>')
   .option('--description <description>', '描述')
   .option('--keywords <keywords>', '关键字')
   .option('--author <author>', '作者')

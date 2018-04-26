@@ -4,7 +4,6 @@ module.exports = {
   listTemplates: [
     'react',
     'vue',
-    'module',
     'web'
   ]
 };

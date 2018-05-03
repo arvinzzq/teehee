@@ -4,9 +4,8 @@ const download = require('download');
 const chalk = require('chalk');
 const ora = require('ora');
 const inquirer = require('inquirer');
-const lodash = require('lodash');
 const handlebars = require('handlebars');
-const gitUser = require('../lib/gitUser');
+const generatePrompts = require('./generatePrompts');
 const template = require('../../config/template');
 
 /**
@@ -34,32 +33,8 @@ module.exports = (projectType, projectName, command) => {
     console.log(chalk.green('模板下载完成 ~ ᕕ(ᐛ)ᕗ'));
     const metaPath = path.resolve(__dirname, `../templates/${prefix}-${projectType}-template-master/meta.js`);
     const meta = require(metaPath);
-
-    // Collect initialized options of parameters.
-    const {
-      version,
-      description,
-      keywords,
-      author,
-      license
-    } = command;
-
-    const options = {
-      version: (!lodash.isFunction(version) && version) || '0.0.1',
-      description: (!lodash.isFunction(description) && description) || '',
-      keywords: keywords || '',
-      author: author || gitUser().author,
-      license: license ||  'MIT'
-    };
-
-    // Collect prompts according to command input.
-    const prompts = [];
-    meta.prompts.forEach(item => {
-      if (!command[item.name] || lodash.isFunction(command[item.name])) {
-        prompts.push(item);
-      }
-    });
-
+    const options = command.opts();
+    const prompts = generatePrompts(meta, options);
     inquirer.prompt(prompts).then(anwsers => {
       const context = {
         ...options,

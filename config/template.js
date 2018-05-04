@@ -1,6 +1,6 @@
 module.exports = {
   gitAddr: 'https://github.com/zz1211',
-  prefix: 'bloom',
+  prefix: 'teehee',
   listTemplates: [
     'react',
     'vue',

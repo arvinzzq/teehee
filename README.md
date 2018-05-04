@@ -1,4 +1,4 @@
-# Bloom
+# Teehee
 
 ## Introduction
 
@@ -7,7 +7,7 @@
 ## Usage
 
 ```
-bloom init [project name]
+teehee init [project name]
 ```
 该指令初始化对应名字的项目，选择项目的类型，并且根据提示输入参数用于之后项目模板的渲染。
 

@@ -10,6 +10,7 @@
     "scaffolding",
     "tool"
   ],
+  "repository": "git@github.com:zz1211/teehee.git",
   "author": "zhongzhiqiang <zqzhong1211@163.com>",
   "license": "MIT",
   "dependencies": {

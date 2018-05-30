@@ -5,6 +5,7 @@ module.exports = {
     'react',
     'vue',
     'web',
+    'module',
     'extension'
   ]
 };

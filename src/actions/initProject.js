@@ -5,10 +5,10 @@ const template = require('../../config/template');
 const generateTemplate = require('../lib/generateTemplate');
 
 /**
- * Download template files to temporary folder which will be removed,
- * and render files to destination folder according to context.
+ * Initialize project according to project name and options.
+ * @param {String} projectName 
+ * @param {Object} command 
  */
-
 module.exports = (projectName, command) => {
   if (projectName && fs.existsSync(projectName)) {
     console.log(chalk.red(`创建失败，当前目录下 ${projectName} 已经存在。`));

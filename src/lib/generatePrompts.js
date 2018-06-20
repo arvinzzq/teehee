@@ -10,9 +10,9 @@ function checkPrompts(item , prompts) {
 }
 
 /**
- * Priority: options > meta > default prompts
- * @param {prompts from meta file of template} meta
- * @param {options from terminal} options
+ * Priority: options > meta > default-prompts
+ * @param {Object} meta
+ * @param {Object} options
  */
 module.exports = (meta, options) => {
   const defaultPrompts = [{

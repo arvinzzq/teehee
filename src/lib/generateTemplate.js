@@ -1,38 +1,20 @@
 const fs = require('fs-extra');
 const path = require('path');
-const download = require('download');
 const chalk = require('chalk');
-const ora = require('ora');
 const inquirer = require('inquirer');
 const handlebars = require('handlebars');
+const downloadTemplate = require('./downloadTemplate');
 const generatePrompts = require('./generatePrompts');
-const template = require('../../config/template');
 
 /**
- * Download template files to temporary folder which will be removed,
- * and render files to destination folder according to context.
+ * Render downloaded template files to destination folder.
+ * @param {String} projectType 
+ * @param {String} projectName 
+ * @param {Object} command 
  */
-
 module.exports = (projectType, projectName, command) => {
-  if (projectName && fs.existsSync(projectName)) {
-    console.log(chalk.red(`创建失败，当前目录下 ${projectName} 已经存在。`));
-    return;
-  }
-  const { gitAddr, prefix } = template;
-
-  fs.ensureDirSync(path.resolve(__dirname, '../templates'));
-  const spinner = ora('模板下载中...').start();
-
-  const downloadPath = `${gitAddr}/${prefix}-${projectType}-template/archive/master.zip`;
-  const temporaryPath = path.resolve(__dirname, '../templates/');
-
-  download(downloadPath, temporaryPath, {
-    extract: true
-  }).then(data => {
-    spinner.stop();
-    console.log(chalk.green('模板下载完成 ~ ᕕ(ᐛ)ᕗ'));
-    const metaPath = path.resolve(__dirname, `../templates/${prefix}-${projectType}-template-master/meta.js`);
-    const meta = require(metaPath);
+  downloadTemplate(projectType).then(({data, pathTemplate }) => {
+    const meta = require(`${pathTemplate}/meta.js`);
     const options = command.opts();
     const prompts = generatePrompts(meta, options);
     inquirer.prompt(prompts).then(anwsers => {
@@ -64,7 +46,6 @@ module.exports = (projectType, projectName, command) => {
     });
 
   }).catch(err => {
-    spinner.stop();
     fs.removeSync(path.resolve(__dirname, '../templates'));
     console.log(chalk.red(`Error: ${err} \n阿喵，出错啦~`));
   });

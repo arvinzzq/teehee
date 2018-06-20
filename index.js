@@ -16,5 +16,14 @@ program
   .option('--license <license>', '许可类型')
   .action(actions.initProject);
 
+
+/**
+ * 
+ */
+program
+  .command('babel <entryFileName>')
+  .option('-c, --cluster')
+  .action(actions.babelCompile)
+
 program
   .parse(process.argv);

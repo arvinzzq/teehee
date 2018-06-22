@@ -1,12 +1,6 @@
 const program = require('commander');
-const actions = require('./src/actions');
 
-/**
- * process command parameters
- */
-
-program
-  .version(require('./package').version);
+program.version(require('./package').version);
 
 program
   .command('init <projectName>')
@@ -14,16 +8,11 @@ program
   .option('--keywords <keywords>', '关键字')
   .option('--author <author>', '作者')
   .option('--license <license>', '许可类型')
-  .action(actions.initProject);
+  .action((projectName, command) => require('./src/actions/initProject')(projectName, command));
 
-
-/**
- * 
- */
 program
-  .command('babel <entryFileName>')
+  .command('start <entryFileName>')
   .option('-c, --cluster')
-  .action(actions.babelCompile)
+  .action((entryFileName, command) => require('./src/actions/babelStart')(entryFileName, command));
 
-program
-  .parse(process.argv);
+program.parse(process.argv);

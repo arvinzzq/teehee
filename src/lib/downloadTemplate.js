@@ -7,7 +7,7 @@ const template = require('../../config/template');
 
 /**
  * Download template from remote github repository to temporary folder.
- * @param {String} projectType 
+ * @param {String} projectType
  */
 module.exports = (projectType) => {
   const { gitAddr, prefix } = template;
@@ -17,9 +17,7 @@ module.exports = (projectType) => {
   const downloadPath = `${gitAddr}/${prefix}-${projectType}-template/archive/master.zip`;
   const temporaryPath = path.resolve(__dirname, '../templates/');
 
-  return download(downloadPath, temporaryPath, {
-    extract: true
-  }).then(data => {
+  return download(downloadPath, temporaryPath, { extract: true }).then(data => {
     spinner.stop();
     console.log(chalk.green('模板下载完成 ~ ᕕ(ᐛ)ᕗ'));
     return {

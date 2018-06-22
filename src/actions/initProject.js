@@ -6,8 +6,8 @@ const generateTemplate = require('../lib/generateTemplate');
 
 /**
  * Initialize project according to project name and options.
- * @param {String} projectName 
- * @param {Object} command 
+ * @param {String} projectName
+ * @param {Object} command
  */
 module.exports = (projectName, command) => {
   if (projectName && fs.existsSync(projectName)) {
@@ -20,7 +20,6 @@ module.exports = (projectName, command) => {
     message: '请选择创建的项目类型',
     choices: template.listTemplates
   }];
-
   inquirer.prompt(prompts).then(answers => {
     generateTemplate(answers.projectType, projectName, command);
   }).catch(err => {

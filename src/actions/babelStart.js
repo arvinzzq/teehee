@@ -1,8 +1,10 @@
+const fs = require('fs');
 const path = require('path');
 const babelRegister = require('babel-register');
 const bunyan = require('bunyan');
-
-babelRegister({
+const babelMerge = require('babel-merge');
+const cwd = process.cwd();
+const defualtBabelrc = {
   presets: [
     [
       require.resolve('babel-preset-env'), {
@@ -13,7 +15,11 @@ babelRegister({
     ]
   ],
   plugins: ['babel-plugin-transform-runtime', 'babel-plugin-transform-decorators-legacy', 'babel-plugin-transform-object-rest-spread'].map(require.resolve)
-});
+};
+const pathBabelConfig = path.resolve(cwd, './.babelrc');
+const babelConfig = babelMerge(defualtBabelrc, fs.existsSync(pathBabelConfig) ? JSON.parse(fs.readFileSync(pathBabelConfig)) : {});
+
+babelRegister(babelConfig);
 
 module.exports = (entryFileName, command) => {
   const cluster = require('cluster');
@@ -34,6 +40,6 @@ module.exports = (entryFileName, command) => {
   } else {
     require(entryFileName[0] === '/'
       ? entryFileName
-      : path.resolve(process.cwd(), entryFileName));
+      : path.resolve(cwd, entryFileName));
   }
 };

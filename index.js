@@ -13,6 +13,7 @@ program
 program
   .command('start <entryFileName>')
   .option('-c, --cluster')
+  .option('-b, --babel')
   .action((entryFileName, command) => require('./src/actions/babelStart')(entryFileName, command));
 
 program.parse(process.argv);

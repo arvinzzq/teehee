@@ -13,3 +13,4 @@ teehee init [project name]
 
 目前暂时支持 react、vue、npm module、chrome extension 和 full-stack web 的template，TBD。
 
+![usage demo](./demo.gif)
